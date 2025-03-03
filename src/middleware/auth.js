@@ -1,10 +1,7 @@
-// src/middleware/authMiddleware.js
-const { getAuth } = require('firebase/auth');
-const { firebaseApp } = require('../config/firebase');
+import { auth } from "../config/firebase.js";
 
-exports.verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   try {
-    // Get token from Authorization header
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -16,23 +13,21 @@ exports.verifyToken = async (req, res, next) => {
     
     const token = authHeader.split(' ')[1];
     
-    // TEMPORARY: Just pass the token through without verifying
-    // In production, you should use Firebase Admin SDK to verify tokens
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authenticated'
+      });
+    }
     
-    // Extract user ID from the request path or body for now
-    // This is NOT secure and is only for development
-    const uid = req.body.uid || req.params.userId || 'unknown-user';
-    
-    // Add user info to request
     req.user = {
-      uid: uid,
-      email: req.body.email || 'unknown@example.com'
+      uid: currentUser.uid,
+      email: currentUser.email
     };
     
-    console.warn('WARNING: Using insecure token verification. Set up Firebase Admin SDK for production.');
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
     return res.status(401).json({
       success: false,
       message: 'Invalid token',
