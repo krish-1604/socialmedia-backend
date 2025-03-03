@@ -1,7 +1,6 @@
-const { db } = require('../config/firebase'); // Import Firestore database instance
-const { serverTimestamp, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where, limit } = require('firebase/firestore'); // Import Firestore functions
-
-const usersCollection = collection(db, 'users'); // Reference to the 'users' collection
+import { db } from "../config/firebase.js";
+import {serverTimestamp, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where, limit } from "firebase/firestore";
+const usersCollection = collection(db, 'users');
 
 class User {
   // Create a new user document

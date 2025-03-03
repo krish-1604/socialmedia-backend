@@ -1,6 +1,6 @@
-const User = require('../models/user');
+import { User } from "../models/user.js";
 
-exports.getUserProfile = async (req, res) => {
+export const getUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
     
@@ -13,7 +13,6 @@ exports.getUserProfile = async (req, res) => {
       });
     }
     
-    // Remove sensitive information
     const { password, ...userProfile } = userData;
     
     return res.status(200).json({
@@ -30,7 +29,7 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-exports.updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
   try {
     const uid = req.user.uid;
     const { username, fullName, bio, profilePicture } = req.body;
