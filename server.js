@@ -8,6 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/user", userRoutes);
+
 app.get("/", (req, res) => {
   res.send("Krish is Best");
 }
