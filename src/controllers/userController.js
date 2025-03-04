@@ -1,23 +1,34 @@
 import { User } from "../models/user.js";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../config/firebase.js";
 
 export const getUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
     
-    const userData = await User.findByUid(userId);
+    // Get user data directly from Firestore
+    const userDoc = await getDoc(doc(db, "users", userId));
     
-    if (!userData) {
+    if (!userDoc.exists()) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
     
-    const { password, ...userProfile } = userData;
+    const userData = userDoc.data();
     
     return res.status(200).json({
       success: true,
-      data: userProfile
+      data: {
+        uid: userId,
+        email: userData.email,
+        firstName: userData.firstname,
+        lastName: userData.lastname,
+        username: userData.username,
+        profilepic: userData.profilepic || null,
+        createdAt: userData.createdAt
+      }
     });
   } catch (error) {
     console.error('Get user profile error:', error);

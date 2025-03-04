@@ -1,4 +1,4 @@
-import admin from "../config/firebaseAdmin.js"; // Import Firebase Admin SDK instance
+import { auth } from "../config/firebase.js";
 
 export const verifyToken = async (req, res, next) => {
   try {
@@ -11,14 +11,18 @@ export const verifyToken = async (req, res, next) => {
       });
     }
 
-    const token = authHeader.split(' ')[1];
-
-    // Verify token with Firebase Admin SDK
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    // Just verify if the user is authenticated with Firebase
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authenticated'
+      });
+    }
 
     req.user = {
-      uid: decodedToken.uid,
-      email: decodedToken.email
+      uid: currentUser.uid,
+      email: currentUser.email
     };
 
     next();
